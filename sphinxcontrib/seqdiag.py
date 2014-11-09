@@ -51,7 +51,8 @@ class seqdiag_node(seqdiag.utils.rst.nodes.seqdiag):
         options = dict(antialias=builder.config.seqdiag_antialias,
                        fontpath=builder.config.seqdiag_fontpath,
                        fontmap=builder.config.seqdiag_fontmap,
-                       format=image_format)
+                       format=image_format,
+                       transparency=builder.config.seqdiag_transparency)
         outputdir = getattr(builder, 'imgpath', builder.outdir)
         return os.path.join(outputdir, self.get_path(**options))
 
@@ -59,7 +60,8 @@ class seqdiag_node(seqdiag.utils.rst.nodes.seqdiag):
         options = dict(antialias=builder.config.seqdiag_antialias,
                        fontpath=builder.config.seqdiag_fontpath,
                        fontmap=builder.config.seqdiag_fontmap,
-                       format=image_format)
+                       format=image_format,
+                       transparency=builder.config.seqdiag_transparency)
 
         if hasattr(builder, 'imagedir'):  # Sphinx (>= 1.3.x)
             outputdir = os.path.join(builder.outdir, builder.imagedir)
