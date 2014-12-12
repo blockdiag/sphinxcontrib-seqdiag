@@ -2,37 +2,18 @@
 
 from setuptools import setup, find_packages
 
-long_desc = '''
-This package contains the seqdiag Sphinx extension.
-
-.. _Sphinx: http://sphinx.pocoo.org/
-.. _seqdiag: http://blockdiag.com/en/seqdiag/
-
-This extension enable you to insert sequence diagrams in your Sphinx document.
-Following code is sample::
-
-   .. seqdiag::
-
-      diagram {
-        browser => webserver => database;
-      }
-
-
-This module needs seqdiag_.
-'''
-
 requires = ['seqdiag>=0.9.3', 'Sphinx>=0.6', 'setuptools']
 
 setup(
     name='sphinxcontrib-seqdiag',
-    version='0.7.2',
+    version='0.8.0',
     url='http://bitbucket.org/birkenfeld/sphinx-contrib',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-seqdiag',
     license='BSD',
-    author='Takeshi Komiya',
+    author='Takeshi KOMIYA',
     author_email='i.tkomiya@gmail.com',
     description='Sphinx "seqdiag" extension',
-    long_description=long_desc,
+    long_description=open('README.rst').read(),
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
