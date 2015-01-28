@@ -224,7 +224,7 @@ def html_depart_seqdiag(self, node):
 
 
 def get_image_format_for(builder):
-    if builder.format == 'html':
+    if builder.format == 'html' or builder.format == 'slides':
         image_format = builder.config.seqdiag_html_image_format.upper()
     elif builder.format == 'latex':
         if builder.config.seqdiag_tex_image_format:
