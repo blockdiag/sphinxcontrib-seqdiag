@@ -7,8 +7,7 @@ requires = ['blockdiag>=1.5.0', 'seqdiag>=0.9.3', 'Sphinx>=0.6']
 setup(
     name='sphinxcontrib-seqdiag',
     version='0.8.1',
-    url='http://bitbucket.org/birkenfeld/sphinx-contrib',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-seqdiag',
+    url='http://github.com/tk0miya/sphinxcontrib-seqdiag',
     license='BSD',
     author='Takeshi KOMIYA',
     author_email='i.tkomiya@gmail.com',
