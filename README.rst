@@ -2,14 +2,14 @@
 sphinxcontrib-seqdiag
 =====================
 
-.. image:: https://travis-ci.org/tk0miya/sphinxcontrib-seqdiag.svg?branch=master
-   :target: https://travis-ci.org/tk0miya/sphinxcontrib-seqdiag
+.. image:: https://travis-ci.org/blockdiag/sphinxcontrib-seqdiag.svg?branch=master
+   :target: https://travis-ci.org/blockdiag/sphinxcontrib-seqdiag
 
-.. image:: https://coveralls.io/repos/tk0miya/sphinxcontrib-seqdiag/badge.png?branch=master
-   :target: https://coveralls.io/r/tk0miya/sphinxcontrib-seqdiag?branch=master
+.. image:: https://coveralls.io/repos/blockdiag/sphinxcontrib-seqdiag/badge.png?branch=master
+   :target: https://coveralls.io/r/blockdiag/sphinxcontrib-seqdiag?branch=master
 
-.. image:: https://codeclimate.com/github/tk0miya/sphinxcontrib-seqdiag/badges/gpa.svg
-   :target: https://codeclimate.com/github/tk0miya/sphinxcontrib-seqdiag
+.. image:: https://codeclimate.com/github/blockdiag/sphinxcontrib-seqdiag/badges/gpa.svg
+   :target: https://codeclimate.com/github/blockdiag/sphinxcontrib-seqdiag
 
 A sphinx extension for embedding sequence diagram using seqdiag_.
 
