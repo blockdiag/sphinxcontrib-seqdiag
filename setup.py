@@ -6,7 +6,7 @@ requires = ['blockdiag>=1.5.0', 'seqdiag>=0.9.3', 'Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-seqdiag',
-    version='0.8.4',
+    version='0.8.5',
     url='http://github.com/blockdiag/sphinxcontrib-seqdiag',
     license='BSD',
     author='Takeshi KOMIYA',
