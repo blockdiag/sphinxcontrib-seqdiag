@@ -34,7 +34,7 @@ setup(
         'Topic :: Utilities',
     ],
     platforms='any',
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
     install_requires=requires,
     namespace_packages=['sphinxcontrib'],
