@@ -19,18 +19,45 @@ import traceback
 import pkg_resources
 from collections import namedtuple
 from docutils import nodes
+import sphinx
 from sphinx import addnodes
 from sphinx.util.osutil import ensuredir
 
 import seqdiag.utils.rst.nodes
 import seqdiag.utils.rst.directives
+from blockdiag.elements import DiagramNode
 from blockdiag.utils.bootstrap import detectfont, Application
 from blockdiag.utils.compat import u, string_types
 from blockdiag.utils.fontmap import FontMap
 from blockdiag.utils.rst.directives import with_blockdiag
 
+try:
+    from sphinx.locale import get_translation
+    _ = get_translation('sphinxcontrib.seqdiag')
+except ImportError:
+    from sphinx.locale import _
+
+
+package_dir = os.path.abspath(os.path.dirname(__file__))
+locale_dir = os.path.join(package_dir, 'locales')
+
 # fontconfig; it will be initialized on `builder-inited` event.
 fontmap = None
+
+
+@classmethod
+def clear(cls):
+    """adhoc: override to translate attrnames."""
+    super(DiagramNode, cls).clear()
+    cls.shape = 'box'
+    cls.linecolor = (0, 0, 0)
+    cls.label_orientation = 'horizontal'
+    cls.desctable = ['numbered', 'label', 'description']
+    cls.attrname = dict(numbered=_('No'), label=_('Name'),
+                        description=_('Description'))
+
+
+DiagramNode.clear = clear
 
 
 class seqdiag_node(seqdiag.utils.rst.nodes.seqdiag):
@@ -83,6 +110,19 @@ class seqdiag_node(seqdiag.utils.rst.nodes.seqdiag):
 
 class Seqdiag(seqdiag.utils.rst.directives.SeqdiagDirective):
     node_class = seqdiag_node
+
+    def edge_description_table(self, diagram):
+        """adhoc: override to translate header columns."""
+        edges = diagram.traverse_edges()
+
+        widths = [25, 50]
+        headers = [_('Name'), _('Description')]
+        descriptions = [e.to_desctable() for e in edges if e.style != 'none']
+
+        if any(desc[1] for desc in descriptions):
+            return self._description_table(descriptions, widths, headers)
+        else:
+            return None
 
     def node2image(self, node, diagram):
         return node
@@ -326,6 +366,9 @@ def setup(app):
     app.add_config_value('seqdiag_latex_image_format', 'PNG', 'html')
     app.connect("builder-inited", on_builder_inited)
     app.connect("doctree-resolved", on_doctree_resolved)
+
+    if sphinx.version_info > (2, 0):
+        app.add_message_catalog('sphinxcontrib.seqdiag', locale_dir)
 
     return {
         'version': pkg_resources.require('seqdiag')[0].version,
