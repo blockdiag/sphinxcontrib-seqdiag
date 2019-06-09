@@ -2,191 +2,156 @@
 
 import os
 import re
-from sphinx_testing import with_app
-from blockdiag.utils.compat import u
 
-import sys
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
+import pytest
 
 seqdiag_fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
-with_png_app = with_app(srcdir='tests/docs/basic',
-                        buildername='latex',
-                        write_docstring=True,
-                        confoverrides={
-                            'latex_documents': [('index', 'test.tex', u(''), u('test'), 'manual')],
-                        })
-with_pdf_app = with_app(srcdir='tests/docs/basic',
-                        buildername='latex',
-                        write_docstring=True,
-                        confoverrides={
-                            'seqdiag_latex_image_format': 'PDF',
-                            'latex_documents': [('index', 'test.tex', u(''), u('test'), 'manual')],
-                            'seqdiag_fontpath': seqdiag_fontpath,
-                        })
-with_oldpdf_app = with_app(srcdir='tests/docs/basic',
-                           buildername='latex',
-                           write_docstring=True,
-                           confoverrides={
-                               'seqdiag_tex_image_format': 'PDF',
-                               'latex_documents': [('index', 'test.tex', u(''), u('test'), 'manual')],
-                               'seqdiag_fontpath': seqdiag_fontpath,
-                           })
 
 
-class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
-    @with_png_app
-    def test_build_png_image(self, app, status, warning):
-        """
-        .. seqdiag::
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_build_png_image(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'\\sphinxincludegraphics{{seqdiag-.*?}.png}', source)
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.png}')
 
-    @unittest.skipUnless(os.path.exists(seqdiag_fontpath), "TrueType font not found")
-    @unittest.skipIf(sys.version_info[:2] == (3, 2), "reportlab does not support python 3.2")
-    @with_pdf_app
-    def test_build_pdf_image1(self, app, status, warning):
-        """
-        .. seqdiag::
+@pytest.mark.skipif(not os.path.exists(seqdiag_fontpath), reason="TrueType font not found")
+@pytest.mark.sphinx('latex', testroot='basic',
+                    confoverrides={
+                        'seqdiag_latex_image_format': 'PDF',
+                        'seqdiag_fontpath': seqdiag_fontpath,
+                    })
+def test_build_pdf_image1(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'\\sphinxincludegraphics{{seqdiag-.*?}.pdf}', source)
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.pdf}')
 
-    @unittest.skipUnless(os.path.exists(seqdiag_fontpath), "TrueType font not found")
-    @unittest.skipIf(sys.version_info[:2] == (3, 2), "reportlab does not support python 3.2")
-    @with_oldpdf_app
-    def test_build_pdf_image2(self, app, status, warning):
-        """
-        .. seqdiag::
+@pytest.mark.skipif(not os.path.exists(seqdiag_fontpath), reason="TrueType font not found")
+@pytest.mark.sphinx('latex', testroot='basic',
+                    confoverrides={
+                        'seqdiag_tex_image_format': 'PDF',
+                        'seqdiag_fontpath': seqdiag_fontpath,
+                    })
+def test_build_pdf_image2(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'\\sphinxincludegraphics{{seqdiag-.*?}.pdf}', source)
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.pdf}')
 
-    @with_png_app
-    def test_width_option(self, app, status, warning):
-        """
-        .. seqdiag::
-           :width: 3cm
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_width_option(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "   :width: 3cm\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'\\sphinxincludegraphics\[width=3cm\]{{seqdiag-.*?}.png}', source)
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics\\[width=3cm\\]{seqdiag-.*?.png}')
 
-    @with_png_app
-    def test_height_option(self, app, status, warning):
-        """
-        .. seqdiag::
-           :height: 4cm
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_height_option(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "   :height: 4cm\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'\\sphinxincludegraphics\[height=4cm\]{{seqdiag-.*?}.png}', source)
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics\\[height=4cm\\]{seqdiag-.*?.png}')
 
-    @with_png_app
-    def test_scale_option(self, app, status, warning):
-        """
-        .. seqdiag::
-           :scale: 50%
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_scale_option(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "   :scale: 50%\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'\\sphinxincludegraphics\[scale=0.5\]{{seqdiag-.*?}.png}', source)
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\scalebox{0.500000}{\\\\includegraphics{seqdiag-.*?.png}}')
 
-    @with_png_app
-    def test_align_option_left(self, app, status, warning):
-        """
-        .. seqdiag::
-           :align: left
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_align_option_left(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "   :align: left\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'{\\sphinxincludegraphics{{seqdiag-.*?}.png}\\hspace\*{\\fill}}', source)
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '{\\\\includegraphics{seqdiag-.*?.png}\\\\hfill}')
 
-    @with_png_app
-    def test_align_option_center(self, app, status, warning):
-        """
-        .. seqdiag::
-           :align: center
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_align_option_center(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "   :align: center\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'{\\hspace\*{\\fill}\\sphinxincludegraphics{{seqdiag-.*?}.png}\\hspace\*{\\fill}}', source)
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '{\\\\hfill\\\\includegraphics{seqdiag-.*?.png}\\\\hfill}')
 
-    @with_png_app
-    def test_align_option_right(self, app, status, warning):
-        """
-        .. seqdiag::
-           :align: right
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_align_option_right(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "   :align: right\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'{\\hspace\*{\\fill}\\sphinxincludegraphics{{seqdiag-.*?}.png}}', source)
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '{\\\\hfill\\\\includegraphics{seqdiag-.*?.png}}')
 
-    @with_png_app
-    def test_caption_option(self, app, status, warning):
-        """
-        .. seqdiag::
-           :caption: hello world
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_caption_option(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "   :caption: hello world\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.png}')
+    figure = re.compile(r'\\begin{figure}\[htbp\].\\centering.\\capstart.*?'
+                        r'\\sphinxincludegraphics{{seqdiag-.*?}.png}.'
+                        r'\\caption{hello world}.*\\end{figure}', re.DOTALL)
+    assert re.search(figure, source)
 
-        figure = re.compile('\\\\begin{figure}\\[htbp\\]\r?\n\\\\centering.*?'
-                            '\\\\caption{hello world}\\\\end{figure}', re.DOTALL)
-        self.assertRegexpMatches(source, figure)
 
-    @with_png_app
-    def test_caption_option_and_align_option(self, app, status, warning):
-        """
-        .. seqdiag::
-           :align: left
-           :caption: hello world
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_caption_option_and_align_option(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "   :align: left\n"
+                                          "   :caption: hello world\n"
+                                          "\n"
+                                          "   A -> B;\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
 
-           A -> B;
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.png}')
+    figure = re.compile(r'\\begin{wrapfigure}{l}{0pt}.'
+                        r'\\centering.'
+                        r'\\noindent\\sphinxincludegraphics{{seqdiag-.*?}.png}.'
+                        r'\\caption{hello world}.*\\end{wrapfigure}', re.DOTALL)
+    assert re.search(figure, source)
 
-        figure = re.compile('\\\\begin{figure}\\[htbp\\]\\\\begin{flushleft}.*?'
-                            '\\\\caption{hello world}\\\\end{flushleft}\\\\end{figure}', re.DOTALL)
-        self.assertRegexpMatches(source, figure)
 
-    @with_png_app
-    def test_href(self, app, status, warning):
-        """
-        .. seqdiag::
-
-           A -> B;
-           A [href=":ref:`target`"];
-        """
-        app.builder.build_all()
-        source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.png}')
+@pytest.mark.sphinx('latex', testroot='basic')
+def test_href(app, status, warning):
+    (app.srcdir / 'index.rst').write_text(".. seqdiag::\n"
+                                          "\n"
+                                          "   A -> B;\n"
+                                          "   A [href=\":href:`target`\"];\n")
+    app.build()
+    source = (app.outdir / 'test.tex').text()
+    assert re.search(r'\\sphinxincludegraphics{{seqdiag-.*?}.png}', source)

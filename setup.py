@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-requires = ['blockdiag>=1.5.0', 'seqdiag>=0.9.3', 'Sphinx>=0.6']
+requires = ['blockdiag>=1.5.0', 'seqdiag>=0.9.3', 'Sphinx>=1.8']
 
 setup(
     name='sphinxcontrib-seqdiag',
@@ -23,18 +23,15 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Documentation',
         'Topic :: Documentation :: Sphinx',
         'Topic :: Utilities',
     ],
     platforms='any',
     packages=find_packages(exclude=['tests', 'tests.*']),
+    python_requires=">=3.6",
     include_package_data=True,
     install_requires=requires,
     namespace_packages=['sphinxcontrib'],

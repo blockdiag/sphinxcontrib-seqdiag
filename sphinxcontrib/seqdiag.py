@@ -20,6 +20,7 @@ import pkg_resources
 from collections import namedtuple
 from docutils import nodes
 from sphinx import addnodes
+from sphinx.util import logging
 from sphinx.util.osutil import ensuredir
 
 import seqdiag.utils.rst.nodes
@@ -28,6 +29,8 @@ from blockdiag.utils.bootstrap import detectfont, Application
 from blockdiag.utils.compat import u, string_types
 from blockdiag.utils.fontmap import FontMap
 from blockdiag.utils.rst.directives import with_blockdiag
+
+logger = logging.getLogger(__name__)
 
 # fontconfig; it will be initialized on `builder-inited` event.
 fontmap = None
@@ -110,7 +113,7 @@ def resolve_reference(builder, href):
             else:
                 return xref['refuri']
         else:
-            builder.warn('undefined label: %s' % refid)
+            logger.warning('undefined label: %s', refid)
             return None
 
 
@@ -210,15 +213,14 @@ def html_visit_seqdiag(self, node):
         if self.builder.config.seqdiag_debug:
             traceback.print_exc()
 
-        msg = ("seqdiag error: UnicodeEncodeError caught "
-               "(check your font settings)")
-        self.builder.warn(msg)
+        logger.warning("seqdiag error: UnicodeEncodeError caught "
+                       "(check your font settings)")
         raise nodes.SkipNode
     except Exception as exc:
         if self.builder.config.seqdiag_debug:
             traceback.print_exc()
 
-        self.builder.warn('dot code %r: %s' % (node['code'], str(exc)))
+        logger.warning('dot code %r: %s', node['code'], str(exc))
         raise nodes.SkipNode
 
 
@@ -253,7 +255,7 @@ def get_image_format_for(builder):
 def on_builder_inited(self):
     # show deprecated message
     if self.builder.config.seqdiag_tex_image_format:
-        self.builder.warn('seqdiag_tex_image_format is deprecated. Use seqdiag_latex_image_format.')
+        logger.warning('seqdiag_tex_image_format is deprecated. Use seqdiag_latex_image_format.')
 
     # initialize fontmap
     global fontmap
@@ -261,7 +263,7 @@ def on_builder_inited(self):
     try:
         fontmappath = self.builder.config.seqdiag_fontmap
         fontmap = FontMap(fontmappath)
-    except:
+    except Exception:
         fontmap = FontMap(None)
 
     try:
@@ -273,7 +275,7 @@ def on_builder_inited(self):
             config = namedtuple('Config', 'font')(fontpath)
             fontpath = detectfont(config)
             fontmap.set_default_font(fontpath)
-    except:
+    except Exception:
         pass
 
 
@@ -287,7 +289,7 @@ def on_doctree_resolved(self, doctree, docname):
         if self.builder.config.seqdiag_debug:
             traceback.print_exc()
 
-        self.builder.warn('seqdiag error: %s' % exc)
+        logger.warning('seqdiag error: %s', exc)
         for node in doctree.traverse(seqdiag_node):
             node.parent.remove(node)
 
@@ -308,7 +310,7 @@ def on_doctree_resolved(self, doctree, docname):
             if self.builder.config.seqdiag_debug:
                 traceback.print_exc()
 
-            self.builder.warn('dot code %r: %s' % (node['code'], str(exc)))
+            logger.warning('dot code %r: %s', node['code'], str(exc))
             node.parent.remove(node)
 
 
