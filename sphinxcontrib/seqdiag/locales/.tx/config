@@ -1,0 +1,10 @@
+[main]
+host = https://www.transifex.com
+
+[blockdiag-1.sphinxcontrib-seqdiag-pot]
+file_filter = <lang>/LC_MESSAGES/sphinxcontrib.seqdiag.po
+minimum_perc = 0
+source_file = sphinxcontrib.seqdiag.pot
+source_lang = en
+type = PO
+
