@@ -11,6 +11,8 @@ if sys.version_info < (2, 7):
 else:
     import unittest
 
+CR = '\r?\n'
+
 seqdiag_fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
 with_png_app = with_app(srcdir='tests/docs/basic',
                         buildername='latex',
@@ -46,7 +48,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.png}')
+        self.assertRegexpMatches(source, r'\\sphinxincludegraphics{{seqdiag-.*?}.png}')
 
     @unittest.skipUnless(os.path.exists(seqdiag_fontpath), "TrueType font not found")
     @unittest.skipIf(sys.version_info[:2] == (3, 2), "reportlab does not support python 3.2")
@@ -59,7 +61,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.pdf}')
+        self.assertRegexpMatches(source, r'\\sphinxincludegraphics{seqdiag-.*?.pdf}')
 
     @unittest.skipUnless(os.path.exists(seqdiag_fontpath), "TrueType font not found")
     @unittest.skipIf(sys.version_info[:2] == (3, 2), "reportlab does not support python 3.2")
@@ -72,7 +74,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.pdf}')
+        self.assertRegexpMatches(source, r'\\sphinxincludegraphics{{seqdiag-.*?}.pdf}')
 
     @with_png_app
     def test_width_option(self, app, status, warning):
@@ -84,7 +86,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics\\[width=3cm\\]{seqdiag-.*?.png}')
+        self.assertRegexpMatches(source, r'\\sphinxincludegraphics\[width=3cm\]{{seqdiag-.*?}.png}')
 
     @with_png_app
     def test_height_option(self, app, status, warning):
@@ -96,7 +98,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics\\[height=4cm\\]{seqdiag-.*?.png}')
+        self.assertRegexpMatches(source, r'\\sphinxincludegraphics\[height=4cm\]{{seqdiag-.*?}.png}')
 
     @with_png_app
     def test_scale_option(self, app, status, warning):
@@ -108,7 +110,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\scalebox{0.500000}{\\\\includegraphics{seqdiag-.*?.png}}')
+        self.assertRegexpMatches(source, r'\\sphinxincludegraphics\[scale=0.5\]{{seqdiag-.*?}.png}')
 
     @with_png_app
     def test_align_option_left(self, app, status, warning):
@@ -120,7 +122,8 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '{\\\\includegraphics{seqdiag-.*?.png}\\\\hfill}')
+        self.assertRegexpMatches(source, (r'{\\sphinxincludegraphics{{seqdiag-.*?}.png}'
+                                          r'\\hspace\*{\\fill}}'))
 
     @with_png_app
     def test_align_option_center(self, app, status, warning):
@@ -132,7 +135,9 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '{\\\\hfill\\\\includegraphics{seqdiag-.*?.png}\\\\hfill}')
+        self.assertRegexpMatches(source, (r'{\\hspace\*{\\fill}'
+                                          r'\\sphinxincludegraphics{{seqdiag-.*?}.png}'
+                                          r'\\hspace\*{\\fill}}'))
 
     @with_png_app
     def test_align_option_right(self, app, status, warning):
@@ -144,7 +149,8 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '{\\\\hfill\\\\includegraphics{seqdiag-.*?.png}}')
+        self.assertRegexpMatches(source, (r'{\\hspace\*{\\fill}'
+                                          r'\\sphinxincludegraphics{{seqdiag-.*?}.png}}'))
 
     @with_png_app
     def test_caption_option(self, app, status, warning):
@@ -156,10 +162,13 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.png}')
 
-        figure = re.compile('\\\\begin{figure}\\[htbp\\]\r?\n\\\\centering.*?'
-                            '\\\\caption{hello world}\\\\end{figure}', re.DOTALL)
+        figure = re.compile((r'\\begin{figure}\[htbp\]' + CR +
+                             r'\\centering' + CR +
+                             r'\\capstart' + CR + CR +
+                             r'\\noindent\\sphinxincludegraphics{{seqdiag-.*?}.png}' + CR +
+                             r'\\caption{hello world}\\label{\\detokenize{index:id1}}\\end{figure}'),
+                            re.DOTALL)
         self.assertRegexpMatches(source, figure)
 
     @with_png_app
@@ -173,10 +182,12 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.png}')
 
-        figure = re.compile('\\\\begin{figure}\\[htbp\\]\\\\begin{flushleft}.*?'
-                            '\\\\caption{hello world}\\\\end{flushleft}\\\\end{figure}', re.DOTALL)
+        figure = re.compile((r'\\begin{wrapfigure}{l}{0pt}' + CR +
+                             r'\\centering' + CR +
+                             r'\\noindent\\sphinxincludegraphics{{seqdiag-.*?}.png}' + CR +
+                             r'\\caption{hello world}\\label{\\detokenize{index:id1}}\\end{wrapfigure}'),
+                            re.DOTALL)
         self.assertRegexpMatches(source, figure)
 
     @with_png_app
@@ -189,4 +200,4 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, '\\\\includegraphics{seqdiag-.*?.png}')
+        self.assertRegexpMatches(source, r'\\sphinxincludegraphics{{seqdiag-.*?}.png}')
