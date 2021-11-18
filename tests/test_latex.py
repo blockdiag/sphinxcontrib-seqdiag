@@ -43,7 +43,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, r'\\sphinxincludegraphics{{seqdiag-.*?}.png}')
+        self.assertRegex(source, r'\\sphinxincludegraphics{{seqdiag-.*?}.png}')
 
     @unittest.skipUnless(os.path.exists(seqdiag_fontpath), "TrueType font not found")
     @with_pdf_app
@@ -55,7 +55,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, r'\\sphinxincludegraphics{seqdiag-.*?.pdf}')
+        self.assertRegex(source, r'\\sphinxincludegraphics{seqdiag-.*?.pdf}')
 
     @unittest.skipUnless(os.path.exists(seqdiag_fontpath), "TrueType font not found")
     @with_oldpdf_app
@@ -67,7 +67,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, r'\\sphinxincludegraphics{{seqdiag-.*?}.pdf}')
+        self.assertRegex(source, r'\\sphinxincludegraphics{{seqdiag-.*?}.pdf}')
 
     @with_png_app
     def test_width_option(self, app, status, warning):
@@ -79,7 +79,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, r'\\sphinxincludegraphics\[width=3cm\]{{seqdiag-.*?}.png}')
+        self.assertRegex(source, r'\\sphinxincludegraphics\[width=3cm\]{{seqdiag-.*?}.png}')
 
     @with_png_app
     def test_height_option(self, app, status, warning):
@@ -91,7 +91,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, r'\\sphinxincludegraphics\[height=4cm\]{{seqdiag-.*?}.png}')
+        self.assertRegex(source, r'\\sphinxincludegraphics\[height=4cm\]{{seqdiag-.*?}.png}')
 
     @with_png_app
     def test_scale_option(self, app, status, warning):
@@ -103,7 +103,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, r'\\sphinxincludegraphics\[scale=0.5\]{{seqdiag-.*?}.png}')
+        self.assertRegex(source, r'\\sphinxincludegraphics\[scale=0.5\]{{seqdiag-.*?}.png}')
 
     @with_png_app
     def test_align_option_left(self, app, status, warning):
@@ -115,8 +115,8 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, (r'{\\sphinxincludegraphics{{seqdiag-.*?}.png}'
-                                          r'\\hspace\*{\\fill}}'))
+        self.assertRegex(source, (r'{\\sphinxincludegraphics{{seqdiag-.*?}.png}'
+                                  r'\\hspace\*{\\fill}}'))
 
     @with_png_app
     def test_align_option_center(self, app, status, warning):
@@ -128,9 +128,9 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, (r'{\\hspace\*{\\fill}'
-                                          r'\\sphinxincludegraphics{{seqdiag-.*?}.png}'
-                                          r'\\hspace\*{\\fill}}'))
+        self.assertRegex(source, (r'{\\hspace\*{\\fill}'
+                                  r'\\sphinxincludegraphics{{seqdiag-.*?}.png}'
+                                  r'\\hspace\*{\\fill}}'))
 
     @with_png_app
     def test_align_option_right(self, app, status, warning):
@@ -142,8 +142,8 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, (r'{\\hspace\*{\\fill}'
-                                          r'\\sphinxincludegraphics{{seqdiag-.*?}.png}}'))
+        self.assertRegex(source, (r'{\\hspace\*{\\fill}'
+                                  r'\\sphinxincludegraphics{{seqdiag-.*?}.png}}'))
 
     @with_png_app
     def test_caption_option(self, app, status, warning):
@@ -162,7 +162,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
                              r'\\noindent\\sphinxincludegraphics{{seqdiag-.*?}.png}' + CR +
                              r'\\caption{hello world}\\label{\\detokenize{index:id1}}\\end{figure}'),
                             re.DOTALL)
-        self.assertRegexpMatches(source, figure)
+        self.assertRegex(source, figure)
 
     @with_png_app
     def test_caption_option_and_align_option(self, app, status, warning):
@@ -181,7 +181,7 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
                              r'\\noindent\\sphinxincludegraphics{{seqdiag-.*?}.png}' + CR +
                              r'\\caption{hello world}\\label{\\detokenize{index:id1}}\\end{wrapfigure}'),
                             re.DOTALL)
-        self.assertRegexpMatches(source, figure)
+        self.assertRegex(source, figure)
 
     @with_png_app
     def test_href(self, app, status, warning):
@@ -193,4 +193,4 @@ class TestSphinxcontribSeqdiagLatex(unittest.TestCase):
         """
         app.builder.build_all()
         source = (app.outdir / 'test.tex').read_text(encoding='utf-8')
-        self.assertRegexpMatches(source, r'\\sphinxincludegraphics{{seqdiag-.*?}.png}')
+        self.assertRegex(source, r'\\sphinxincludegraphics{{seqdiag-.*?}.png}')
