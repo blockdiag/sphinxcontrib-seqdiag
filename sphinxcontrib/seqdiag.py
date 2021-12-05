@@ -120,13 +120,10 @@ def html_render_svg(self, node):
     image = node.to_drawer('SVG', self.builder, filename=None, nodoctype=True)
     image.draw()
 
-    if 'align' in node['options']:
-        align = node['options']['align']
-        self.body.append('<div align="%s" class="align-%s">' % (align, align))
-        self.context.append('</div>\n')
-    else:
-        self.body.append('<div>')
-        self.context.append('</div>\n')
+    # align
+    align = node['options'].get('align', 'default')
+    self.body.append('<div class="align-%s">' % align)
+    self.context.append('</div>\n')
 
     # reftarget
     for node_id in node['ids']:
@@ -164,13 +161,9 @@ def html_render_png(self, node):
         image.save()
 
     # align
-    if 'align' in node['options']:
-        align = node['options']['align']
-        self.body.append('<div align="%s" class="align-%s">' % (align, align))
-        self.context.append('</div>\n')
-    else:
-        self.body.append('<div>')
-        self.context.append('</div>')
+    align = node['options'].get('align', 'default')
+    self.body.append('<div class="align-%s">' % align)
+    self.context.append('</div>\n')
 
     # link to original image
     relpath = node.get_relpath('PNG', self.builder)
