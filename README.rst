@@ -22,7 +22,7 @@ Following code is an example::
         browser => webserver => database;
       }
 
-.. _seqdiag: http://bitbucket.org/blockdiag/seqdiag/
+.. _seqdiag: https://github.com/blockdiag/seqdiag
 
 
 For more details, see `online documentation`_ at http://blockdiag.com/.
